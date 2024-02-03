@@ -14,6 +14,37 @@
     width: 100%;
     padding: 1rem;
 }
+.over .icon i{
+    font-size: 1.5em;
+    border: 5px solid #fff;
+    padding: 1rem;
+    border-radius: 100%;
+    margin-bottom: 1rem;
+}
+.badge{
+    margin-bottom: 1rem;
+}
+.score_text{
+    margin-bottom: 1rem;
+}
+.buttons{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.buttons button{
+    background:none;
+    border: 5px solid #fff;
+    border-radius: 1rem;
+}
+.buttons button:hover{
+    background-color: #FFD33D;
+    transition: 1s all ease-in;
+}
+.over.active{
+    opacity: 1;
+    pointer-events: auto;
+}
 /*card style*/
 .option{
     display: flex;
@@ -82,4 +113,28 @@
     opacity: 0;
     pointer-events: none;
     transition: 1s all ease-in;
+}
+.timer{
+    display: flex;
+    gap: 1rem;
+}
+header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.timer p{
+    background-color: #151D3B;
+    color: #fff;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+.quiz-box .option_list .option.disabled {
+    pointer-events: none !important;
+}
+.show{
+    display: block;
+}
+.nonShow{
+    display: none;
 }

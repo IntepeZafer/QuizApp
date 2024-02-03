@@ -16,6 +16,10 @@
         <div class="card-header">
             <header>
                 <div class="title">Quiz App</div>
+                <div class="timer">
+                    <div class="time_text"><p>Kalan Süre</p></div>
+                    <div class="time-second"><p></p></div>
+                </div>
             </header>
         </div>
         <section class="card-body">
@@ -42,13 +46,23 @@
             </div> 
         </section>
         <footer class="card-footer">
+            <div class="qustion_index">
+                <!-- <span class="badge bg-warning"><b>Soru Sayısı: </b>1 / 4</span> -->
+            </div>
             <button class="btn btn-primary btn-sm btn-footer next-btn">Sonraki Soru</button>
         </footer>
     </div>
     <div class="over">
-        <h1>Sınav Bitti</h1>
-        <p>Tebrikler</p>
+        <div class="icon"><i class="fas fa-crown"></i></div>
+        <div class="score_text"></div>
+        <div class="buttons">
+            <button class="btn btn-primary btn_replay">Tekrar Başlat</button>
+            <button class="btn btn-primary btn_quit">Testi Bitir</button>
+        </div>
     </div>
+    <script src="soru.js"></script>
+    <script src="quiz.js"></script>
+    <script src="ui.js"></script>
     <script src="app.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>

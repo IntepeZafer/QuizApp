@@ -1,73 +1,81 @@
-// Elemanların Tanımlandığı Kısım
-const btn_start = document.querySelector(".btn_Start");
-const quiz_box = document.querySelector(".quiz-box");
-const question_text = document.querySelector(".question-text");
-const option_list = document.querySelector(".option_list");
-const next_btn = document.querySelector(".next-btn");
-const over = document.querySelector(".over");
+'use strict';
+const quiz = new Quiz(sorular);
+const ui = new UI();
 
-// Consructor Kısmının Oluşturulduğu Alan
-function Soru(soruMetni , cevapSecenekleri , dogruCevap){
-    this.soruMetni = soruMetni;
-    this.cevapSecenekleri = cevapSecenekleri;
-    this.dogruCevap = dogruCevap;
-}
 
-// Soru Property Kısmının Diğer Sıflar Tarafından Miras Alması İçin Oluşturulan Kısım
-Soru.prototype.cevabiKontrolEt = function(cevap){
-    return cevap === this.dogruCevap
-}
+ui.btn_start.addEventListener("click" , function(){
+    ui.quiz_box.classList.add("active");
+    ui.btn_start.style.display = "none";
+    ui.soruGoster(quiz.soruGetir());
+    ui.soruSayisiGosgter(quiz.soruIndex + 1 , quiz.sorular.length);
+    ui.next_btn.classList.add("nonShow")
+    startTimer(10);
+});
 
-// Sorular Adında Bir Dizi Oluşturuldu Ve İçine Nesneler Eklendi
-let sorular = [
-    new Soru("1-) Hangisi Js Paket Yönetimidir ?" , {A : "Node.Js" , B : "Typescript" , C : "Npm" , D : "Css"} , "A"),
-    new Soru("2-) Hangisi .Net Paket Yönetimidir ?" , {A : "Node.Js" , B : "Nudget" , C : "Npm" , D : "Html"} , "B"),
-    new Soru("3-) Hangisi Bir Programlama Dili Değildir ?" , {A : "Node.Js" , B : "Java" , C : "C#" , D : "Html"} , "D")
-];
+ui.next_btn.addEventListener("click" , function(){
+    if(quiz.sorular.length != quiz.soruIndex + 1){
+        quiz.soruIndex += 1;
+        clearInterval(counter);
+        startTimer(10);
+        ui.soruGoster(quiz.soruGetir());
+        ui.soruSayisiGosgter(quiz.soruIndex + 1 , quiz.sorular.length);
+        ui.next_btn.classList.remove("active")
+    }else{
+        clearInterval(counter);
+        ui.quiz_box.classList.remove("active")
+        ui.over.classList.add("active");
+        ui.skoruGoster(quiz.sorular.length , quiz.dogruCevapSayisi);
+    };
+});
 
-// Quiz Adında Bir Fonksiyon Oluşturul Ve Sorular Listesinden Referans ALıyor
-function Quiz(sorular){
-    this.sorular = sorular;
-    this.soruIndex = 0;
+function optionSelected(option){
+    clearInterval(counter);
+    let cevap = option.querySelector("span b").textContent;
+    let soru = quiz.soruGetir();
+    if(soru.cevabiKontrolEt(cevap)){
+        quiz.dogruCevapSayisi += 1;
+        console.log(quiz.dogruCevapSayisi)
+        option.classList.add("correct");
+        option.insertAdjacentHTML("beforeend" , ui.correct);
+    }else{
+        option.classList.add("incorrect");
+        option.insertAdjacentHTML("beforeend" , ui.incorrect);
+    }
+    for(let i=0; i < ui.option_list.children.length; i++){
+        ui.option_list.children[i].classList.add("disabled");
+    }
+    ui.next_btn.style.display = "block";
 };
 
-// Quiz Property Oluşturuldu Ve Diğer Sınıflardan Miras Alması İçin Oluşturulan Kısım
-Quiz.prototype.soruGetir = function(){
-    return this.sorular[this.soruIndex]
-}
+ui.btn_quit.addEventListener("click" , function(){
+    window.location.reload();
+});
 
-// quiz adında bir nesne oluşturuldu ve aldığı değer sorular listesi 
-const quiz = new Quiz(sorular);
-
-// button'a click event tanımlandı amacı ise tıklandığı zaman sorular listesi kadar soru getirecek ve index değerini arttıracak
-btn_start.addEventListener("click" , () => {
-    quiz_box.classList.add("active")
-    btn_start.style.display = "none";
-    soruGoster(quiz.soruGetir());
-}) // click olduğunda sorular listesinin eleman sayısı quiz'in index değerine eşit değil ise soruGetir property yapısı miras alıyor ve soru adında değişkene kayır ediliyor sonra oradan gelen index değeri soruGoster fonksiyonuna gönderiliyor
-
-// Soruların Ekrana Basılma İşlemi
-function soruGoster(soru){
-    let questions = `<span>${soru.soruMetni}</span>`;
-    let option = '';
-    for(let cevap in soru.cevapSecenekleri){
-        option += `
-            <div class="option">
-                <span><b>${cevap}</b> : ${soru.cevapSecenekleri[cevap]}</span>
-            </div>
-        `;
+ui.btn_replay.addEventListener("click" , function(){    
+    quiz.soruIndex = 0;
+    quiz.dogruCevapSayisi = 0;
+    ui.btn_start.click();
+    ui.over.classList.remove("active");
+});
+let counter;
+function startTimer(time){
+    counter = setInterval(timer , 1000);
+    function timer(){
+        ui.time_second.textContent = time;
+        time--;
+        if(time < 0){
+            clearInterval(counter);
+            ui.time_text.textContent = "Süre Doldu";
+            let cevap = quiz.soruGetir().dogruCevap;
+            for(let option of ui.option_list.children){
+                if(option.querySelector("span b").textContent == cevap){
+                    option.classList.add("correct");
+                    option.insertAdjacentHTML("beforeend" , ui.correct);
+                }
+                option.classList.add("disabled");
+            }
+            ui.next_btn.classList.remove("nonShow");
+            ui.next_btn.classList.add("show")
+        }
     }
-    question_text.innerHTML = questions;
-    option_list.innerHTML = option;
-    
 }
-next_btn.addEventListener("click" , () => {
-    if(quiz.sorular.length != quiz.soruIndex + 1){
-        let soru = quiz.soruGetir();
-        quiz.soruIndex += 1;
-        soruGoster(quiz.soruGetir());
-    }else{
-        quiz_box.style.display = "none";
-        over.style.opacity = "1";
-    }
-})
